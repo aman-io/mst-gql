@@ -88,7 +88,8 @@ export const MSTGQLStore = types
     function mutate<T>(
       mutation: string | DocumentNode,
       variables?: any,
-      optimisticUpdate?: () => void
+      optimisticUpdate?: () => void,
+      checkError?: (result: T) => boolean,
     ): Query<T> {
       if (optimisticUpdate) {
         const recorder = recordPatches(self)
@@ -97,9 +98,13 @@ export const MSTGQLStore = types
         const q = query<T>(mutation, variables, {
           fetchPolicy: "network-only"
         })
-        q.currentPromise().catch(() => {
-          recorder.undo()
-        })
+        q.currentPromise()
+          .then((result) => {
+            if (checkError && checkError(result)) recorder.undo()
+          })
+          .catch(() => {
+            recorder.undo()
+          })
         return q
       } else {
         return query(mutation, variables, {
