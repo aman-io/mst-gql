@@ -101,6 +101,7 @@ export const MSTGQLStore = types
         q.currentPromise()
           .then((result) => {
             if (checkError && checkError(result)) recorder.undo()
+            return result
           })
           .catch(() => {
             recorder.undo()

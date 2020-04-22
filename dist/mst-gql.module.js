@@ -947,6 +947,7 @@ var MSTGQLStore = types.model("MSTGQLStore", {
       });
       q.currentPromise().then(function (result) {
         if (checkError && checkError(result)) { recorder.undo(); }
+        return result;
       }).catch(function () {
         recorder.undo();
       });
