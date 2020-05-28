@@ -626,6 +626,13 @@ ${rootTypes
   )
   .join(",\n")}
 }\n\n`)}\
+${ifTS(`
+/**
+* Enums for the names of base graphql actions
+*/`)}
+${ifTS(generateGraphQLActionsEnum("Query", "Queries", "query"))}
+${ifTS(generateGraphQLActionsEnum("Mutation", "Mutations", "mutate"))}
+
 /**
 * Store, managing, among others, all the objects received through graphQL
 */
@@ -656,6 +663,66 @@ ${rootTypes
 `
     generateFile("RootStore", entryFile)
     generateFile("RootStore.base", modelFile, true)
+  }
+
+  /**
+   * Returns if this field should be skipped in generation. Can happen if:
+   * 1) The field is in the excludes
+   * 2) The field has a return type that is not supported
+   * @param {*} field from an array of queries or mutations
+   */
+  function shouldSkipField(field) {
+    let { name, origName, args, type, description } = field
+
+    if (type.kind === "NON_NULL") type = type.ofType
+    const returnsList = type.kind === "LIST"
+    let returnType = returnsList ? type.ofType : type
+    if (returnType.kind === "NON_NULL") returnType = returnType.ofType
+
+    if (returnType.kind === "OBJECT" && excludes.includes(returnType.name))
+      return true
+    // TODO: probably we will need to support input object types soon
+    if (returnType.kind !== "OBJECT") {
+      console.warn(
+        `Skipping generation of query '${name}', its return type is not yet understood. PR is welcome`
+      )
+      // log(returnType)
+      return true // TODO: for now, we only generate queries for those queries that return objects
+    }
+    return false
+  }
+
+  /**
+   * A func to generate enums that are the names of the graphql actions in the RootStore.base
+   * Like:
+   * export enum RootStoreBaseQueries {
+   *    queryMessages="queryMessages",
+   *    queryMessage="queryMessage",
+   *    queryMe="queryMe"
+   * }
+   *
+   *
+   * @param {*} gqlType Query | Mutation
+   * @param {*} gqlPrefix query | mutation
+   */
+  function generateGraphQLActionsEnum(gqlType, gqlPlural, methodPrefix) {
+    const queries = findObjectByName(gqlType)
+    if (!queries) return ""
+
+    const enumContent = queries.fields
+      .map(field => {
+        const { name } = field
+        if (shouldSkipField(field)) return ""
+        const queryName = `${methodPrefix}${toFirstUpper(name)}`
+        return `${queryName}="${queryName}"`
+      })
+      // Filter out empty strings for skipped fields
+      .filter(n => n)
+      .join(",\n")
+    if (enumContent === "") return
+    return `export enum RootStoreBase${gqlPlural} {
+${enumContent}
+}`
   }
 
   function generateQueries() {
@@ -705,23 +772,13 @@ ${rootTypes
     if (!query) return ""
     return query.fields
       .map(field => {
-        let { name, origName, args, type, description } = field
+        if (shouldSkipField(field)) return ""
 
+        let { name, origName, args, type, description } = field
         if (type.kind === "NON_NULL") type = type.ofType
         const returnsList = type.kind === "LIST"
         let returnType = returnsList ? type.ofType : type
         if (returnType.kind === "NON_NULL") returnType = returnType.ofType
-
-        if (returnType.kind === "OBJECT" && excludes.includes(returnType.name))
-          return ""
-        // TODO: probably we will need to support input object types soon
-        if (returnType.kind !== "OBJECT") {
-          console.warn(
-            `Skipping generation of query '${name}', its return type is not yet understood. PR is welcome`
-          )
-          // log(returnType)
-          return "" // TODO: for now, we only generate queries for those queries that return objects
-        }
 
         const tsType =
           format !== "ts"

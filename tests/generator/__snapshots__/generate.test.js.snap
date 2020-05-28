@@ -112,6 +112,15 @@ type Refs = {
   users: ObservableMap<string, UserModelType>
 }
 
+
+/**
+* Enums for the names of base graphql actions
+*/
+export enum RootStoreBaseQueries {
+queryMe=\\"queryMe\\"
+}
+
+
 /**
 * Store, managing, among others, all the objects received through graphQL
 */
@@ -426,6 +435,13 @@ type Refs = {
   possiblyEmptyBoxes: ObservableMap<string, PossiblyEmptyBoxModelType>
 }
 
+
+/**
+* Enums for the names of base graphql actions
+*/
+
+
+
 /**
 * Store, managing, among others, all the objects received through graphQL
 */
@@ -655,6 +671,15 @@ type Refs = {
   users: ObservableMap<string, UserModelType>
 }
 
+
+/**
+* Enums for the names of base graphql actions
+*/
+export enum RootStoreBaseQueries {
+queryMe=\\"queryMe\\"
+}
+
+
 /**
 * Store, managing, among others, all the objects received through graphQL
 */
@@ -882,6 +907,15 @@ import { InterestEnum } from \\"./InterestEnum\\"
 type Refs = {
   users: ObservableMap<string, UserModelType>
 }
+
+
+/**
+* Enums for the names of base graphql actions
+*/
+export enum RootStoreBaseQueries {
+queryMe=\\"queryMe\\"
+}
+
 
 /**
 * Store, managing, among others, all the objects received through graphQL
@@ -1209,6 +1243,15 @@ type Refs = {
   repos: ObservableMap<string, RepoModelType>
 }
 
+
+/**
+* Enums for the names of base graphql actions
+*/
+export enum RootStoreBaseQueries {
+queryRepo=\\"queryRepo\\"
+}
+
+
 /**
 * Store, managing, among others, all the objects received through graphQL
 */
@@ -1531,6 +1574,15 @@ type Refs = {
   searchresults: ObservableMap<string, SearchResultModelType>
 }
 
+
+/**
+* Enums for the names of base graphql actions
+*/
+export enum RootStoreBaseQueries {
+querySearch=\\"querySearch\\"
+}
+
+
 /**
 * Store, managing, among others, all the objects received through graphQL
 */
@@ -1697,6 +1749,15 @@ export type MovieInput = {
 type Refs = {
 
 }
+
+
+/**
+* Enums for the names of base graphql actions
+*/
+export enum RootStoreBaseQueries {
+querySearch=\\"querySearch\\"
+}
+
 
 /**
 * Store, managing, among others, all the objects received through graphQL
