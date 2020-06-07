@@ -1,5 +1,5 @@
 {
-  "name": "mst-gql",
+  "name": "@aman/mst-gql",
   "version": "0.11.3",
   "description": "Bindings for mobx-state-tree and GraphQL",
   "author": "Michel Weststrate",
@@ -7,6 +7,7 @@
     "mobx-state-tree",
     "graphql"
   ],
+  "scope": "aman",
   "homepage": "https://github.com/mobxjs/mst-gql#readme",
   "repository": {
     "type": "git",
