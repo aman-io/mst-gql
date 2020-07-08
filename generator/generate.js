@@ -484,9 +484,9 @@ ${generateFragments(name, primitiveFields, nonPrimitiveFields)}
         }
         const isSelf = fieldType.name === currentType
         // always using late prevents potential circular dependency issues between files
-        return `types.late(()${
+        return `MSTGQLRef(types.late(()${
           isSelf && format === "ts" ? ": any" : ""
-        } => ${subTypeClassName})`
+        } => ${subTypeClassName}))`
       })
       return `types.union(${mstUnionArgs.join(", ")})`
     }
