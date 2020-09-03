@@ -238,6 +238,7 @@ Query.prototype.fetchResults = function fetchResults () {
   this.promise = promise;
   promise.then(action(function (data) {
     this$1.loading = false;
+    this$1.error = false;
     this$1.data = data;
   }), action(function (error) {
     this$1.loading = false;
@@ -1170,6 +1171,121 @@ QueryBuilder.prototype.toString = function toString () {
   return this.__query;
 };
 
+/* eslint-disable no-undefined,no-param-reassign,no-shadow */
+
+/**
+ * Throttle execution of a function. Especially useful for rate limiting
+ * execution of handlers on events like resize and scroll.
+ *
+ * @param  {Number}    delay          A zero-or-greater delay in milliseconds. For event callbacks, values around 100 or 250 (or even higher) are most useful.
+ * @param  {Boolean}   [noTrailing]   Optional, defaults to false. If noTrailing is true, callback will only execute every `delay` milliseconds while the
+ *                                    throttled-function is being called. If noTrailing is false or unspecified, callback will be executed one final time
+ *                                    after the last throttled-function call. (After the throttled-function has not been called for `delay` milliseconds,
+ *                                    the internal counter is reset)
+ * @param  {Function}  callback       A function to be executed after delay milliseconds. The `this` context and all arguments are passed through, as-is,
+ *                                    to `callback` when the throttled-function is executed.
+ * @param  {Boolean}   [debounceMode] If `debounceMode` is true (at begin), schedule `clear` to execute after `delay` ms. If `debounceMode` is false (at end),
+ *                                    schedule `callback` to execute after `delay` ms.
+ *
+ * @return {Function}  A new, throttled, function.
+ */
+function throttle (delay, noTrailing, callback, debounceMode) {
+  /*
+   * After wrapper has stopped being called, this timeout ensures that
+   * `callback` is executed at the proper times in `throttle` and `end`
+   * debounce modes.
+   */
+  var timeoutID;
+  var cancelled = false; // Keep track of the last time `callback` was executed.
+
+  var lastExec = 0; // Function to clear existing timeout
+
+  function clearExistingTimeout() {
+    if (timeoutID) {
+      clearTimeout(timeoutID);
+    }
+  } // Function to cancel next exec
+
+
+  function cancel() {
+    clearExistingTimeout();
+    cancelled = true;
+  } // `noTrailing` defaults to falsy.
+
+
+  if (typeof noTrailing !== 'boolean') {
+    debounceMode = callback;
+    callback = noTrailing;
+    noTrailing = undefined;
+  }
+  /*
+   * The `wrapper` function encapsulates all of the throttling / debouncing
+   * functionality and when executed will limit the rate at which `callback`
+   * is executed.
+   */
+
+
+  function wrapper() {
+    var self = this;
+    var elapsed = Date.now() - lastExec;
+    var args = arguments;
+
+    if (cancelled) {
+      return;
+    } // Execute `callback` and update the `lastExec` timestamp.
+
+
+    function exec() {
+      lastExec = Date.now();
+      callback.apply(self, args);
+    }
+    /*
+     * If `debounceMode` is true (at begin) this is used to clear the flag
+     * to allow future `callback` executions.
+     */
+
+
+    function clear() {
+      timeoutID = undefined;
+    }
+
+    if (debounceMode && !timeoutID) {
+      /*
+       * Since `wrapper` is being called for the first time and
+       * `debounceMode` is true (at begin), execute `callback`.
+       */
+      exec();
+    }
+
+    clearExistingTimeout();
+
+    if (debounceMode === undefined && elapsed > delay) {
+      /*
+       * In throttle mode, if `delay` time has been exceeded, execute
+       * `callback`.
+       */
+      exec();
+    } else if (noTrailing !== true) {
+      /*
+       * In trailing throttle mode, since `delay` time has not been
+       * exceeded, schedule `callback` to execute `delay` ms after most
+       * recent execution.
+       *
+       * If `debounceMode` is true (at begin), schedule `clear` to execute
+       * after `delay` ms.
+       *
+       * If `debounceMode` is false (at end), schedule `callback` to
+       * execute after `delay` ms.
+       */
+      timeoutID = setTimeout(debounceMode ? clear : exec, debounceMode === undefined ? delay - elapsed : delay);
+    }
+  }
+
+  wrapper.cancel = cancel; // Return the wrapper function.
+
+  return wrapper;
+}
+
 function localStorageMixin(options) {
   if ( options === void 0 ) options = {};
 
@@ -1193,9 +1309,9 @@ function localStorageMixin(options) {
               applySnapshot(self, json);
             }
 
-            addDisposer(self, onSnapshot(self, throttle(function (data) {
+            addDisposer(self, onSnapshot(self, throttle(throttleInterval, function (data) {
               storage.setItem(storageKey, JSON.stringify(data));
-            }, throttleInterval)));
+            })));
           });
         } catch (e) {
           return Promise.reject(e);
@@ -1205,219 +1321,23 @@ function localStorageMixin(options) {
   }); };
 }
 
-function throttle(fn, delay) {
-  var lastCall = 0;
-  var scheduled = false;
-  return function () {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    // already scheduled
-    if (scheduled) { return; }
-    var now = +new Date();
-
-    if (now - lastCall < delay) {
-      if (!scheduled) {
-        // within throttle period, but no next tick scheduled, schedule now
-        scheduled = true;
-        setTimeout(function () {
-          // run and reset
-          lastCall = +new Date();
-          scheduled = false;
-          fn.apply(null, args);
-        }, delay - (now - lastCall) + 10); // fire at the end of the current delay period
-      }
-    } else {
-      // outside throttle period, can execute immediately
-      lastCall = now;
-      fn.apply(null, args);
-    }
-  };
-}
-
-// A type of promise-like that resolves synchronously and supports only one observer
-const _Pact = /*#__PURE__*/(function() {
-	function _Pact() {}
-	_Pact.prototype.then = function(onFulfilled, onRejected) {
-		const result = new _Pact();
-		const state = this.s;
-		if (state) {
-			const callback = state & 1 ? onFulfilled : onRejected;
-			if (callback) {
-				try {
-					_settle(result, 1, callback(this.v));
-				} catch (e) {
-					_settle(result, 2, e);
-				}
-				return result;
-			} else {
-				return this;
-			}
-		}
-		this.o = function(_this) {
-			try {
-				const value = _this.v;
-				if (_this.s & 1) {
-					_settle(result, 1, onFulfilled ? onFulfilled(value) : value);
-				} else if (onRejected) {
-					_settle(result, 1, onRejected(value));
-				} else {
-					_settle(result, 2, value);
-				}
-			} catch (e) {
-				_settle(result, 2, e);
-			}
-		};
-		return result;
-	};
-	return _Pact;
-})();
-
-// Settles a pact synchronously
-function _settle(pact, state, value) {
-	if (!pact.s) {
-		if (value instanceof _Pact) {
-			if (value.s) {
-				if (state & 1) {
-					state = value.s;
-				}
-				value = value.v;
-			} else {
-				value.o = _settle.bind(null, pact, state);
-				return;
-			}
-		}
-		if (value && value.then) {
-			value.then(_settle.bind(null, pact, state), _settle.bind(null, pact, 2));
-			return;
-		}
-		pact.s = state;
-		pact.v = value;
-		const observer = pact.o;
-		if (observer) {
-			observer(pact);
-		}
-	}
-}
-
-function _isSettledPact(thenable) {
-	return thenable instanceof _Pact && thenable.s & 1;
-}
-
-const _iteratorSymbol = /*#__PURE__*/ typeof Symbol !== "undefined" ? (Symbol.iterator || (Symbol.iterator = Symbol("Symbol.iterator"))) : "@@iterator";
-
-const _asyncIteratorSymbol = /*#__PURE__*/ typeof Symbol !== "undefined" ? (Symbol.asyncIterator || (Symbol.asyncIterator = Symbol("Symbol.asyncIterator"))) : "@@asyncIterator";
-
-// Asynchronously implement a generic for loop
-function _for(test, update, body) {
-	var stage;
-	for (;;) {
-		var shouldContinue = test();
-		if (_isSettledPact(shouldContinue)) {
-			shouldContinue = shouldContinue.v;
-		}
-		if (!shouldContinue) {
-			return result;
-		}
-		if (shouldContinue.then) {
-			stage = 0;
-			break;
-		}
-		var result = body();
-		if (result && result.then) {
-			if (_isSettledPact(result)) {
-				result = result.s;
-			} else {
-				stage = 1;
-				break;
-			}
-		}
-		if (update) {
-			var updateValue = update();
-			if (updateValue && updateValue.then && !_isSettledPact(updateValue)) {
-				stage = 2;
-				break;
-			}
-		}
-	}
-	var pact = new _Pact();
-	var reject = _settle.bind(null, pact, 2);
-	(stage === 0 ? shouldContinue.then(_resumeAfterTest) : stage === 1 ? result.then(_resumeAfterBody) : updateValue.then(_resumeAfterUpdate)).then(void 0, reject);
-	return pact;
-	function _resumeAfterBody(value) {
-		result = value;
-		do {
-			if (update) {
-				updateValue = update();
-				if (updateValue && updateValue.then && !_isSettledPact(updateValue)) {
-					updateValue.then(_resumeAfterUpdate).then(void 0, reject);
-					return;
-				}
-			}
-			shouldContinue = test();
-			if (!shouldContinue || (_isSettledPact(shouldContinue) && !shouldContinue.v)) {
-				_settle(pact, 1, result);
-				return;
-			}
-			if (shouldContinue.then) {
-				shouldContinue.then(_resumeAfterTest).then(void 0, reject);
-				return;
-			}
-			result = body();
-			if (_isSettledPact(result)) {
-				result = result.v;
-			}
-		} while (!result || !result.then);
-		result.then(_resumeAfterBody).then(void 0, reject);
-	}
-	function _resumeAfterTest(shouldContinue) {
-		if (shouldContinue) {
-			result = body();
-			if (result && result.then) {
-				result.then(_resumeAfterBody).then(void 0, reject);
-			} else {
-				_resumeAfterBody(result);
-			}
-		} else {
-			_settle(pact, 1, result);
-		}
-	}
-	function _resumeAfterUpdate() {
-		if (shouldContinue = test()) {
-			if (shouldContinue.then) {
-				shouldContinue.then(_resumeAfterTest).then(void 0, reject);
-			} else {
-				_resumeAfterTest(shouldContinue);
-			}
-		} else {
-			_settle(pact, 1, result);
-		}
-	}
-}
-
-var getDataFromTree = function (tree, client, renderFunction) {
-  try {
-    var _exit = false;
-    if (renderFunction === undefined) { renderFunction = require("react-dom/server").renderToStaticMarkup; }
-    return Promise.resolve(_for(function () {
-      return !_exit;
-    }, void 0, function () {
-      var html = renderFunction(tree);
-
-      if (client.__promises.size === 0) {
-        _exit = true;
-        return html;
-      }
-
-      return Promise.resolve(Promise.all(client.__promises.values())).then(function () {});
-    }));
-  } catch (e) {
-    return Promise.reject(e);
-  }
-};
 function createStoreContext(React) {
   return React.createContext(null);
-}
+} // export async function getDataFromTree<STORE extends typeof MSTGQLStore.Type>(
+//   tree: React.ReactElement<any>,
+//   client: STORE,
+//   renderFunction: (
+//     tree: React.ReactElement<any>
+//   ) => string = require("react-dom/server").renderToStaticMarkup
+// ): Promise<string> {
+//   while (true) {
+//     const html = renderFunction(tree)
+//     if (client.__promises.size === 0) {
+//       return html
+//     }
+//     await Promise.all(client.__promises.values())
+//   }
+// }
 
 function normalizeQuery(store, query, ref) {
   var variables = ref.variables;
@@ -1473,5 +1393,5 @@ function withTypedRefs() {
   };
 }
 
-export { MSTGQLStore, configureStoreMixin, Query, MSTGQLObject, MSTGQLRef, createHttpClient, QueryBuilder, localStorageMixin, getDataFromTree, createStoreContext, createUseQueryHook, withTypedRefs };
+export { MSTGQLStore, configureStoreMixin, Query, MSTGQLObject, MSTGQLRef, createHttpClient, QueryBuilder, localStorageMixin, createStoreContext, createUseQueryHook, withTypedRefs };
 //# sourceMappingURL=mst-gql.module.js.map

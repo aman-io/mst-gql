@@ -18,21 +18,21 @@ export function createStoreContext<STORE extends typeof MSTGQLStore.Type>(
   return React.createContext<STORE>(null as any)
 }
 
-export async function getDataFromTree<STORE extends typeof MSTGQLStore.Type>(
-  tree: React.ReactElement<any>,
-  client: STORE,
-  renderFunction: (
-    tree: React.ReactElement<any>
-  ) => string = require("react-dom/server").renderToStaticMarkup
-): Promise<string> {
-  while (true) {
-    const html = renderFunction(tree)
-    if (client.__promises.size === 0) {
-      return html
-    }
-    await Promise.all(client.__promises.values())
-  }
-}
+// export async function getDataFromTree<STORE extends typeof MSTGQLStore.Type>(
+//   tree: React.ReactElement<any>,
+//   client: STORE,
+//   renderFunction: (
+//     tree: React.ReactElement<any>
+//   ) => string = require("react-dom/server").renderToStaticMarkup
+// ): Promise<string> {
+//   while (true) {
+//     const html = renderFunction(tree)
+//     if (client.__promises.size === 0) {
+//       return html
+//     }
+//     await Promise.all(client.__promises.values())
+//   }
+// }
 
 function normalizeQuery<STORE extends typeof MSTGQLStore.Type, DATA>(
   store: STORE,

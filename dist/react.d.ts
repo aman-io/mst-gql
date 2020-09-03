@@ -5,7 +5,6 @@ import { MSTGQLStore } from "./MSTGQLStore";
 declare var ReactNamespace: typeof import("react");
 export declare type QueryLike<STORE, DATA> = ((store: STORE) => Query<DATA>) | Query<DATA> | string | DocumentNode;
 export declare function createStoreContext<STORE extends typeof MSTGQLStore.Type>(React: typeof ReactNamespace): import("react").Context<STORE>;
-export declare function getDataFromTree<STORE extends typeof MSTGQLStore.Type>(tree: React.ReactElement<any>, client: STORE, renderFunction?: (tree: React.ReactElement<any>) => string): Promise<string>;
 export declare type UseQueryHookOptions<STORE> = {
     store?: STORE;
     variables?: any;
