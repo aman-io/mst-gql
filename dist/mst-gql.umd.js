@@ -1,6 +1,6 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('graphql'), require('mobx'), require('graphql-request'), require('mobx-state-tree')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'graphql', 'mobx', 'graphql-request', 'mobx-state-tree'], factory) :
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('graphql'), require('mobx'), require('@aman/graphql-request'), require('mobx-state-tree')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'graphql', 'mobx', '@aman/graphql-request', 'mobx-state-tree'], factory) :
   (factory((global.mstGql = {}),global.graphql,global.mobx,global.graphqlRequest,global.mobxStateTree));
 }(this, (function (exports,graphql,mobx,graphqlRequest,mobxStateTree) {
   function mergeHelper(store, data) {

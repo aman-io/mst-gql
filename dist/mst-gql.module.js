@@ -1,6 +1,6 @@
 import { print } from 'graphql';
 import { action, observable } from 'mobx';
-import { GraphQLClient } from 'graphql-request';
+import { GraphQLClient } from '@aman/graphql-request';
 import { resolveIdentifier, types, getEnv, recordPatches, getParent, getType, applySnapshot, addDisposer, onSnapshot } from 'mobx-state-tree';
 
 function mergeHelper(store, data) {

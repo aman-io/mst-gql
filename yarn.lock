@@ -2,6 +2,15 @@
 # yarn lockfile v1
 
 
+"@aman/graphql-request@^3.1.0":
+  version "3.1.0"
+  resolved "https://npm.qxyc.io/@aman%2fgraphql-request/-/graphql-request-3.1.0.tgz#b88a339802525e836e4409d1cf4f4186cefa87dd"
+  integrity sha512-PJABEpbu0w1W0rSLYcxcyWfTmov2qKxhlCE0+1ffbobqDG1ikHKWAYikaMALO8Puix3NZOj4Z/Q0IVLSOVbgdQ==
+  dependencies:
+    cross-fetch "^3.0.4"
+    extract-files "^9.0.0"
+    form-data "^3.0.0"
+
 "@apollo/federation@0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.14.0.tgz#c1fa14610fc1d7193688cfed3f2989a27f77c7cd"
@@ -2823,13 +2832,12 @@ cosmiconfig@^6.0.0:
     path-type "^4.0.0"
     yaml "^1.7.2"
 
-cross-fetch@2.2.2:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-2.2.2.tgz#a47ff4f7fc712daba8f6a695a11c948440d45723"
-  integrity sha1-pH/09/xxLauo9qaVoRyUhEDUVyM=
+cross-fetch@^3.0.4:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.0.5.tgz#2739d2981892e7ab488a7ad03b92df2816e03f4c"
+  integrity sha512-FFLcLtraisj5eteosnX1gf01qYDCOc4fDy0+euOt8Kn9YBY2NtXL/pCoYPavw24NIQkQqm5ZOLsGD5Zzj0gyew==
   dependencies:
-    node-fetch "2.1.2"
-    whatwg-fetch "2.0.4"
+    node-fetch "2.6.0"
 
 cross-spawn@^5.0.1:
   version "5.1.0"
@@ -3575,6 +3583,11 @@ extglob@^2.0.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
+extract-files@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/extract-files/-/extract-files-9.0.0.tgz#8a7744f2437f81f5ed3250ed9f1550de902fe54a"
+  integrity sha512-CvdFfHkC95B4bBBk36hcEmvdR2awOdhhVUYH6S/zrVj3477zven/fJMYg7121h4T1xHZC+tetUpubpAhxwI7hQ==
+
 extract-stack@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/extract-stack/-/extract-stack-1.0.0.tgz#b97acaf9441eea2332529624b732fc5a1c8165fa"
@@ -4011,13 +4024,6 @@ graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.2.3:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.3.tgz#4a12ff1b60376ef09862c2093edd908328be8423"
   integrity sha512-a30VEBm4PEdx1dRB7MFK7BejejvCvBronbLjht+sHuGYj8PHs7M/5Z+rt5lw551vZ7yfTCj4Vuyy3mSJytDWRQ==
-
-graphql-request@^1.8.2:
-  version "1.8.2"
-  resolved "https://registry.yarnpkg.com/graphql-request/-/graphql-request-1.8.2.tgz#398d10ae15c585676741bde3fc01d5ca948f8fbe"
-  integrity sha512-dDX2M+VMsxXFCmUX0Vo0TopIZIX4ggzOtiCsThgtrKR4niiaagsGTDIHj3fsOMFETpa064vzovI+4YV4QnMbcg==
-  dependencies:
-    cross-fetch "2.2.2"
 
 graphql-tag@2.10.3, graphql-tag@^2.10.1:
   version "2.10.3"
@@ -5931,12 +5937,7 @@ node-abi@^2.7.0:
   dependencies:
     semver "^5.4.1"
 
-node-fetch@2.1.2:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.1.2.tgz#ab884e8e7e57e38a944753cec706f788d1768bb5"
-  integrity sha1-q4hOjn5X44qUR1POxwb3iNF2i7U=
-
-node-fetch@^2.1.2, node-fetch@^2.2.0:
+node-fetch@2.6.0, node-fetch@^2.1.2, node-fetch@^2.2.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.0.tgz#e633456386d4aa55863f676a7ab0daa8fdecb0fd"
   integrity sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==
@@ -8911,11 +8912,6 @@ whatwg-encoding@^1.0.1, whatwg-encoding@^1.0.5:
   integrity sha512-b5lim54JOPN9HtzvK9HFXvBma/rnfFeqsic0hSpjtDbVxR3dJKLc+KB4V6GgiGOvl7CY/KNh8rxSo9DKQrnUEw==
   dependencies:
     iconv-lite "0.4.24"
-
-whatwg-fetch@2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-2.0.4.tgz#dde6a5df315f9d39991aa17621853d720b85566f"
-  integrity sha512-dcQ1GWpOD/eEQ97k66aiEVpNnapVj90/+R+SXTPYGHpYBBypfKJEQjLrvMZ7YXbKm21gXd4NcuxUTjiv1YtLng==
 
 whatwg-mimetype@^2.2.0, whatwg-mimetype@^2.3.0:
   version "2.3.0"

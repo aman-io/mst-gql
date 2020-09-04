@@ -34,7 +34,7 @@
   "scripts": {
     "test": "jest test && cd examples/2-scaffolding && yarn && yarn start",
     "watch": "jest test --watch",
-    "build": "microbundle --no-compress --external mobx,mobx-react,mobx-state-tree,graphql-tag,graphql,react,react-dom,graphql-request",
+    "build": "microbundle --no-compress --external mobx,mobx-react,mobx-state-tree,graphql-tag,graphql,react,react-dom,@aman/graphql-request",
     "format": "prettier --write '**/*'"
   },
   "husky": {
@@ -43,13 +43,13 @@
     }
   },
   "dependencies": {
+    "@aman/graphql-request": "^3.1.0",
     "apollo": "^2.27.0",
     "arg": "^4.1.1",
     "camelcase": "^5.3.1",
     "cosmiconfig": "^6.0.0",
     "fast-json-stable-stringify": "^2.1.0",
     "graphql": "^14.6.0",
-    "graphql-request": "^1.8.2",
     "pluralize": "^8.0.0",
     "throttle-debounce": "^2.1.0"
   },

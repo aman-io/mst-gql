@@ -1,6 +1,6 @@
 var graphql = require('graphql');
 var mobx = require('mobx');
-var graphqlRequest = require('graphql-request');
+var graphqlRequest = require('@aman/graphql-request');
 var mobxStateTree = require('mobx-state-tree');
 
 function mergeHelper(store, data) {
