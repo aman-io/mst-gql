@@ -43,7 +43,7 @@
     }
   },
   "dependencies": {
-    "@aman/graphql-request": "^2.0.3",
+    "@aman/graphql-request": "^2.0.4",
     "apollo": "^2.27.0",
     "arg": "^4.1.1",
     "camelcase": "^5.3.1",
