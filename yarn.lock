@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@aman/graphql-request@^2.0.4":
-  version "2.0.4"
-  resolved "https://npm.qxyc.io/@aman%2fgraphql-request/-/graphql-request-2.0.4.tgz#657c642c74a58b62106907a6fd880946142ed285"
-  integrity sha512-nyjC7ecsahDxpwKIQAOTTqzOsgoK28Sl4buoDnPnLWRPg/W6nJvwboA2EOc6RK6alabpcUreZad6GBwUS+FDDw==
+"@aman/graphql-request@^2.0.5":
+  version "2.0.5"
+  resolved "https://npm.qxyc.io/@aman%2fgraphql-request/-/graphql-request-2.0.5.tgz#d37ee3bc7a0809be8042d0988a766a354f4449f4"
+  integrity sha512-6OTzZL5A3VkESZo37pZZJ0LutzxXsOnXqyGA/CB4HmNAVeMQFm0iATjiL80mM/C+ng4hsRqWBYfO0X721J6RMQ==
   dependencies:
     cross-fetch "^3.0.4"
     extract-files "^9.0.0"
