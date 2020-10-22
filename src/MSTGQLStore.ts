@@ -1,13 +1,13 @@
-import { SubscriptionClient } from "subscriptions-transport-ws"
-import { types, getEnv, recordPatches, IAnyModelType } from "mobx-state-tree"
+import camelcase from "camelcase"
 import { DocumentNode } from "graphql"
+import { getEnv, IAnyModelType, recordPatches, types } from "mobx-state-tree"
+import pluralize from "pluralize"
+import { SubscriptionClient } from "subscriptions-transport-ws"
+import { deflateHelper } from "./deflateHelper"
 
 import { mergeHelper } from "./mergeHelper"
-import { getFirstValue, typenameToCollectionName } from "./utils"
-import { QueryOptions, Query } from "./Query"
-import { deflateHelper } from "./deflateHelper"
-import pluralize from "pluralize"
-import camelcase from "camelcase"
+import { Query, QueryOptions } from "./Query"
+import { getFirstValue } from "./utils"
 
 export interface RequestHandler<T = any> {
   request(query: string, variables: any): Promise<T>
@@ -35,7 +35,7 @@ export const MSTGQLStore = types
       __afterInit: false
     }
   })
-  .actions(self => {
+  .actions((self) => {
     Promise.resolve().then(() => (self as any).__onAfterInit())
 
     const {
@@ -117,7 +117,10 @@ export const MSTGQLStore = types
     function subscribe<T = any>(
       query: string | DocumentNode,
       variables?: any,
-      onData?: (item: T) => void
+      onData?: (item: T) => void,
+      onError: (error: Error) => void = (error) => {
+        throw error
+      }
     ): () => void {
       if (!gqlWsClient) throw new Error("No WS client available")
       const sub = gqlWsClient
@@ -127,7 +130,9 @@ export const MSTGQLStore = types
         })
         .subscribe({
           next(data) {
-            if (data.errors) throw new Error(JSON.stringify(data.errors))
+            if (data.errors) {
+              return onError(new Error(JSON.stringify(data.errors)))
+            }
             ;(self as any).__runInStoreContext(() => {
               const res = (self as any).merge(getFirstValue(data.data))
               if (onData) onData(res)

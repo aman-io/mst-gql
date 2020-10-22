@@ -69,7 +69,7 @@ function main() {
   let json
   if (input.startsWith("http:") || input.startsWith("https:")) {
     const tmpFile = "tmp_schema.json"
-    const command = `${__dirname}/../node_modules/.bin/apollo client:download-schema --endpoint=${input} ${tmpFile} ${
+    const command = `${__dirname}/../../.bin/apollo client:download-schema --endpoint=${input} ${tmpFile} ${
       header ? `--header=${header}` : "" // the header options MUST be after the output 0_o
     }`
     child_process.execSync(command)
@@ -96,7 +96,7 @@ function main() {
 
   console.log(
     "Detected types: \n" +
-      json.__schema.types.map(t => `  - [${t.kind}] ${t.name}`).join("\n")
+      json.__schema.types.map((t) => `  - [${t.kind}] ${t.name}`).join("\n")
   )
 
   // console.log(JSON.stringify(json, null, 2))

@@ -3,11 +3,13 @@
 const { scaffold } = require("../../generator/generate")
 const escapeStringRegexp = require("escape-string-regexp")
 
-const toRegex = snippet => new RegExp(`\\s+${escapeStringRegexp(snippet)}\\s+`)
+const toRegex = (snippet) =>
+  new RegExp(`\\s+${escapeStringRegexp(snippet)}\\s+`)
 const findFile = (output, name) =>
-  output.find(o => o.length && o.length > 1 && o[0] === name)
+  output.find((o) => o.length && o.length > 1 && o[0] === name)
 const hasFileContent = (file, snippet) => file[1].match(toRegex(snippet))
 const hasFileContentExact = (file, snippet) => file[1].indexOf(snippet) != -1
+const hasFileContentRegexp = (file, snippet) => file[1].match(snippet)
 
 test("basic scaffolding to work", () => {
   expect(
@@ -365,4 +367,81 @@ test("handle reserved graphql name", () => {
       "Cannot generate SubscriptionModel, Subscription is a graphql reserved name"
     )
   }
+})
+
+test("boolean return value", () => {
+  expect(
+    scaffold(
+      `
+type User {
+  id: ID
+  name: String!
+  avatar: String!
+}
+type Query {
+  me: User
+}
+type Mutation {
+  returnBoolean(toReturn: Boolean!): Boolean
+}
+`,
+      {
+        roots: ["User"],
+        namingConvention: "asis"
+      }
+    )
+  ).toMatchSnapshot()
+})
+
+test("scaffolding with scalar type", () => {
+  const output = scaffold(
+    `
+type Query {
+  helloWithString: String!
+  helloWithType: HelloResult!
+}
+
+type HelloResult {
+  result: String!
+}
+`,
+    {
+      namingConvention: "asis"
+    }
+  )
+
+  expect(output).toMatchSnapshot()
+
+  const rootStoreBase = findFile(output, "RootStore.base")
+  expect(rootStoreBase).toBeTruthy()
+  expect(
+    hasFileContentRegexp(rootStoreBase, ".*HelloResultModelSelector.*")
+  ).toBeTruthy()
+  expect(
+    hasFileContentRegexp(rootStoreBase, "import { .*HelloResultModelSelector }")
+  ).toBeTruthy()
+
+  // This should be generated for the query with scalar (String) return type
+  expect(
+    hasFileContentExact(
+      rootStoreBase,
+      "queryHelloWithString(variables?: {  }, options: QueryOptions = {}) {"
+    )
+  ).toBeTruthy()
+
+  // This should be generated for the query with complex return type
+  expect(
+    hasFileContentExact(
+      rootStoreBase,
+      "queryHelloWithType(variables?: {  }, resultSelector: string | ((qb: HelloResultModelSelector) => HelloResultModelSelector) = helloResultModelPrimitives.toString(), options: QueryOptions = {})"
+    )
+  ).toBeTruthy()
+
+  // Make sure no StringModelSelector is generated
+  expect(
+    hasFileContentRegexp(rootStoreBase, ".*StringModelSelector")
+  ).toBeFalsy()
+  expect(
+    hasFileContentRegexp(rootStoreBase, "import { .*StringModelSelector }")
+  ).toBeFalsy()
 })

@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## 0.13.0
+
+- Fixes `onError` functionality when using subscriptions. [#262](https://github.com/mobxjs/mst-gql/pull/262) - [zpalin](https://github.com/zpalin)
+- Fix scaffolding on npm install. [#265](https://github.com/mobxjs/mst-gql/pull/265) - [jvcmanke](https://github.com/jvcmanke)
+- Add `clearData` option to query. [#275](https://github.com/mobxjs/mst-gql/pull/275) - [mattiasewers](https://github.com/mattiasewers)
+- Fix `Scaffolding references unknown classes` error. [#277](https://github.com/mobxjs/mst-gql/pull/277) - [beepsoft](https://github.com/beepsoft)
+
+## 0.12.5
+
+- Fix running scaffold when installing with npm. [#265](https://github.com/mobxjs/mst-gql/pull/265) - [jvcmanke](https://github.com/jvcmanke)
+
+## 0.12.3
+
+- Add ability to handle errors yourself when using subscriptions. [#261](https://github.com/mobxjs/mst-gql/pull/261) - [zpalin](https://github.com/zpalin)
+
+## 0.12.1
+
+- Support using union types in actions in RootStore.base [#257](https://github.com/mobxjs/mst-gql/pull/257)
+
 ## 0.12.0
 
 - Suppot for non-object return values. These currently are not stored in the store automatically. [#246](https://github.com/mobxjs/mst-gql/pull/246)
